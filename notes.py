@@ -334,5 +334,126 @@ with open('words.txt') as f:
 
 # print(func('happy', 'hungry', []))
 
-print(bfs('hit', 'cog'))
-print(bfs('sail', 'boat'))
+# print(bfs('hit', 'cog'))
+# print(bfs('sail', 'boat'))
+
+"""Connected Components"""
+
+# Seperate "islands" in a graph
+
+# Example:
+# Graph nodes: A B C D E F
+# Graph edges: A,B C,D, C,E, D,E
+
+# [[0, 1, 0, 1, 0],
+# [1, 1, 0, 1, 1],
+# [0, 0, 1, 0, 0],
+# [1, 0, 1, 0, 0],
+# [1, 1, 0, 0, 0]]
+
+# row 5, col 4:
+#     neighbors:
+#         row 4, col 4
+#         row 6, col 4
+#         row 5, col 3
+#         row 5, col 5
+
+def island_counter(islands):
+    # Count the number of islands in a 2-D grid
+    counter = 0
+    visited = set()
+
+    def get_neighbors(coords):
+        row, col = coords
+        neighbors = []
+
+        if row >0 and islands[row-1][col] == 1:
+            neighbors.append((row-1, col))
+
+        if row < len(islands)-1 and islands[row+1][col] == 1:
+            neighbors.append((row+1, col))  
+
+        if col >0 and islands[row][col-1] == 1:
+            neighbors.append((row, col-1))
+
+        if col < len(islands[row])-1 and islands[row][col+1] == 1:
+            neighbors.append((row, col+1))  
+        return neighbors
+
+    def bft(row, col):
+        q = Queue() # Using queue from yesterday's notes
+        q.enqueue((row, col))
+
+        while q.size() > 0:
+            coords  = q.dequeue()
+            if coords not in visited:
+                visited.add(coords)
+                q.enqueue(neighbor)
+
+
+    # for all the nodes in the graph
+    for row in range(len(islands)):
+        for col in range(len(islands[row])):
+            node_val = islands[row][col]
+            coords = (row, col)
+            
+            # if we find an univisited 1 node:
+            if coords not in visited and node_val==1:
+             #BFT from that node
+             bft(row, col)
+             #incremet counter
+             counter += 1
+
+    # return the counter.
+    return counter
+
+
+islands = [[0, 1, 0, 1, 0],
+           [1, 1, 0, 1, 1],
+           [0, 0, 1, 0, 0],
+           [1, 0, 1, 0, 0],
+           [1, 1, 0, 0, 0]]
+
+islands_2 = [[1, 0, 0, 1, 1, 0, 1, 1, 0, 1],
+           [0, 0, 1, 1, 0, 1, 0, 0, 0, 0],
+           [0, 1, 1, 1, 0, 0, 0, 1, 0, 1],
+           [0, 0, 1, 0, 0, 1, 0, 0, 1, 1],
+           [0, 0, 1, 1, 0, 1, 0, 1, 1, 0],
+           [0, 1, 0, 1, 1, 1, 0, 1, 0, 0],
+           [0, 0, 1, 0, 0, 1, 1, 0, 0, 0],
+           [1, 0, 1, 1, 0, 0, 0, 1, 1, 0],
+           [0, 1, 1, 0, 0, 0, 1, 1, 0, 0],
+           [0, 0, 1, 1, 0, 1, 0, 0, 1, 0]]       
+
+# print(island_counter(islands)) # returns 4
+# print(island_counter(islands_2)) # returns 13 
+
+"""Generating Random Social Media Users"""
+
+class SocialGraph:
+
+    def __init__(self):
+        self.friendships = {}
+
+    def populate_graph(self, num_users, avg_friendships):
+        self.last_id = 0
+        self.users = {}
+        self.friendships = {}
+        for i in range(0, num_users):
+            self.addUser(f"User {i}")
+        possible_friendships = []
+        for user_id in self.users:
+            for friend_id in range(user_id + 1, self.last_id + 1):
+                possible_friendships.append((user_id, friend_id))
+        random.shuffle(possible_friendships)
+        x = 0
+        for i in range(0, math.floor(num_users * avg_friendships / 2)):
+            friendship = possible_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
+        
+    def get_all_social_paths(user):
+        # prints how user is connected to every other person in the graph
+        pass
+
+sg = SocialGraph()
+print(sg.populate_graph(10, 2))
