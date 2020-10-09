@@ -455,5 +455,6 @@ class SocialGraph:
         # prints how user is connected to every other person in the graph
         pass
 
-sg = SocialGraph()
-print(sg.populate_graph(10, 2))
+# sg = SocialGraph()
+# print(sg.populate_graph(10, 2))
+
