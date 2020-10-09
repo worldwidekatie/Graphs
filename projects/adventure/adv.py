@@ -29,26 +29,29 @@ player = Player(world.starting_room)
 # # traversal_path = ['n', 'n']
 traversal_path = []
 traversal_graph = {}
-room_path = []
 room_visits = {}
 
 
 while len(traversal_graph) != 500:
-
+    # If the current room isn't in the traversal graph, add it.
     if player.current_room.id not in traversal_graph:
         traversal_graph[player.current_room.id] = {}
     
+    # If the current room isn't in room visits, add it with a one.
     if player.current_room.id not in room_visits:
         room_visits[player.current_room.id] = 1
-    
+
+    # If it's in room visits, add a one because we're visiting it again.
     else:
         room_visits[player.current_room.id] += 1
 
+    # This section finds all the surrounding rooms and puts them in our traversal graph
+    # it also puts the rooms in rooms visited but with a zero since we haven't
+    # actually visited them yet.
     if player.current_room.n_to != None:
         traversal_graph[player.current_room.id]['n'] = player.current_room.n_to.id
         if player.current_room.n_to.id not in room_visits:
             room_visits[player.current_room.n_to.id] = 0
-
     if player.current_room.s_to != None:
         traversal_graph[player.current_room.id]['s'] = player.current_room.s_to.id
         if player.current_room.s_to.id not in room_visits:
@@ -62,6 +65,12 @@ while len(traversal_graph) != 500:
         if player.current_room.e_to.id not in room_visits:
             room_visits[player.current_room.e_to.id] = 0
 
+    # This section looks at all the options for next room to go into
+    # If we've been in them the same number of times, it favors going
+    # south, then east, then north, then west.
+    # Otherwise, it chooses the room we've been in the fewest times.
+    # This keeps us from getting stuck in loops of going back and forth
+    # between the same two or three rooms.
     options = {}
     if player.current_room.s_to != None:
         options[room_visits[player.current_room.s_to.id]] = 's'
@@ -71,10 +80,12 @@ while len(traversal_graph) != 500:
         options[room_visits[player.current_room.n_to.id]] = 'n'   
     if player.current_room.w_to != None:
         options[room_visits[player.current_room.w_to.id]] = 'w'
+    
+    # Then we actually do the moving to that room and add it 
+    # To the path. 
     x = options[min(options)]
     player.travel(x)
     traversal_path.append(x)
-    room_path.append(player.current_room.id)   
 
 
 # # TRAVERSAL TEST
